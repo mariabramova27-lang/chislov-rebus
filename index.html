@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Земля 1. Числовые ребусы — Кристалл Знаний</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+
+:root {
+  --bg: #0a0e1a;
+  --card: #1a2233;
+  --text: #e8edf7;
+  --text-dim: #8892a8;
+  --cyan: #00d4ff;
+  --purple: #a855f7;
+  --pink: #ec4899;
+  --mint: #10b981;
+  --gold: #fbbf24;
+  --coral: #ef4444;
+}
+
+html, body {
+  font-family: -apple-system, 'Arial', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(168, 85, 247, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 80% 90%, rgba(0, 212, 255, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.06) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(168, 85, 247, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168, 85, 247, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 14px;
+}
+
+.screen { display: none; animation: fadeIn 0.5s ease; }
+.screen.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ТОП-ПАНЕЛЬ */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(26, 34, 51, 0.9);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 16px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  backdrop-filter: blur(12px);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.top-stats {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-dim);
+}
+.stat-item .stat-value { color: var(--gold); }
+.stat-item .stat-icon { font-size: 16px; }
+
+/* КНОПКИ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--cyan), #0099cc);
+  color: #001a22;
+  padding: 14px 28px;
+  border-radius: 60px;
+  font-size: 15px;
+  font-weight: 900;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #006680, 0 8px 20px rgba(0, 212, 255, 0.4);
+  transition: all 0.1s cubic-bezier(0.34, 1.56, 0.64, 1);
+  font-family: inherit;
+  min-height: 48px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+.btn::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+}
+.btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 #006680, 0 12px 28px rgba(0, 212, 255, 0.6);
+}
+.btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #006680, 0 4px 12px rgba(0, 212, 255, 0.4);
+}
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold), #d97706);
+  color: #1a0f00;
+  box-shadow: 0 6px 0 #92400e, 0 8px 20px rgba(251, 191, 36, 0.4);
+}
+.btn-gold:hover {
+  box-shadow: 0 8px 0 #92400e, 0 12px 28px rgba(251, 191, 36, 0.6);
+}
+.btn-gold:active {
+  box-shadow: 0 2px 0 #92400e, 0 4px 12px rgba(251, 191, 36, 0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--cyan);
+  border: 2px solid var(--cyan);
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+}
+.btn-secondary:hover {
+  background: rgba(0, 212, 255, 0.1);
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+}
+.btn-small { padding: 10px 20px; font-size: 13px; min-height: 40px; }
+
+/* СТАРТ */
+.start-screen {
+  text-align: center;
+  padding: 30px 16px;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.start-icon {
+  font-size: 100px;
+  margin-bottom: 16px;
+  animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 40px rgba(168, 85, 247, 0.6));
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-15px) rotate(5deg); }
+}
+.start-title {
+  font-size: clamp(28px, 7vw, 56px);
+  font-weight: 900;
+  line-height: 1.1;
+  background: linear-gradient(135deg, var(--cyan), var(--purple), var(--pink));
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 12px;
+  animation: gradientShift 4s ease infinite;
+}
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.start-sub {
+  font-size: clamp(13px, 3vw, 18px);
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.start-dialogue {
+  max-width: 620px;
+  background: rgba(26, 34, 51, 0.95);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  border-radius: 20px;
+  padding: 22px;
+  margin-bottom: 24px;
+  text-align: left;
+  position: relative;
+  backdrop-filter: blur(12px);
+}
+.start-dialogue::before {
+  content: "🔢 СЧИТАРИК";
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  background: var(--purple);
+  color: #fff;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+.start-dialogue p {
+  font-size: clamp(13px, 2.5vw, 15px);
+  line-height: 1.8;
+  margin-bottom: 10px;
+}
+.start-dialogue p:last-child { margin-bottom: 0; }
+.start-dialogue strong { color: var(--cyan); }
+.start-dialogue em { color: var(--gold); font-style: normal; }
+
+/* ИГРА */
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.game-header h2 {
+  font-size: clamp(16px, 3.5vw, 22px);
+  font-weight: 900;
+  color: var(--cyan);
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}
+.game-scene {
+  text-align: center;
+  margin-bottom: 16px;
+  padding: 14px 18px;
+  background: rgba(168, 85, 247, 0.1);
+  border-radius: 16px;
+  border-left: 4px solid var(--purple);
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--text);
+}
+.game-scene strong { color: var(--cyan); font-style: normal; }
+
+/* BLOOM */
+.bloom-progress {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.bloom-step {
+  flex: 1;
+  min-width: 60px;
+  padding: 6px 8px;
+  background: rgba(26, 34, 51, 0.7);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  border-radius: 8px;
+  text-align: center;
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+.bloom-step.active {
+  background: linear-gradient(135deg, var(--purple), var(--pink));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+  transform: scale(1.05);
+}
+.bloom-step.done {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--mint);
+  border-color: var(--mint);
+}
+
+.game-card {
+  background: rgba(26, 34, 51, 0.95);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 22px;
+  padding: 22px;
+  backdrop-filter: blur(12px);
+  margin-bottom: 14px;
+}
+
+.question {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: rgba(10, 14, 26, 0.6);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  border-radius: 16px;
+}
+.question-label {
+  font-size: 10px;
+  color: var(--cyan);
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.question-text {
+  font-size: clamp(15px, 3vw, 19px);
+  font-weight: 800;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+/* РЕБУС */
+.rebus-container {
+  text-align: center;
+  margin: 20px 0;
+  padding: 24px 16px;
+  background: rgba(10, 14, 26, 0.6);
+  border-radius: 18px;
+  border: 2px solid rgba(168, 85, 247, 0.3);
+}
+.rebus-line {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  font-size: clamp(28px, 7vw, 44px);
+  font-weight: 900;
+  color: var(--cyan);
+  letter-spacing: 4px;
+  margin-bottom: 10px;
+  font-family: 'Courier New', monospace;
+}
+.rebus-line.divider {
+  border-bottom: 3px solid var(--cyan);
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+.rebus-cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(44px, 10vw, 64px);
+  height: clamp(44px, 10vw, 64px);
+  background: rgba(168, 85, 247, 0.15);
+  border: 2px dashed rgba(168, 85, 247, 0.5);
+  border-radius: 12px;
+  font-size: clamp(20px, 5vw, 30px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.rebus-cell:hover {
+  border-color: var(--cyan);
+  background: rgba(0, 212, 255, 0.1);
+}
+.rebus-cell.filled {
+  border-style: solid;
+  border-color: var(--mint);
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--mint);
+}
+.rebus-letter {
+  font-size: clamp(28px, 7vw, 44px);
+  font-weight: 900;
+  color: var(--gold);
+  min-width: clamp(36px, 8vw, 56px);
+  text-align: center;
+}
+
+/* ПУЛ ЦИФР */
+.digits-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 16px 0;
+  padding: 12px;
+  background: rgba(10, 14, 26, 0.5);
+  border-radius: 14px;
+}
+.digit {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 900;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.4);
+}
+.digit:hover {
+  transform: scale(1.15) rotate(-5deg);
+}
+.digit.selected {
+  background: linear-gradient(135deg, var(--mint), #059669);
+  transform: scale(1.2);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.8);
+}
+
+/* ОПЦИИ */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.option {
+  padding: 14px 18px;
+  background: rgba(10, 14, 26, 0.8);
+  border: 2px solid rgba(168, 85, 247, 0.4);
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  font-family: inherit;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.option:hover:not(:disabled) {
+  border-color: var(--cyan);
+  background: rgba(0, 212, 255, 0.1);
+  transform: translateX(5px);
+}
+.option:disabled { cursor: not-allowed; }
+.option.correct {
+  border-color: var(--mint);
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--mint);
+  animation: pop 0.4s ease;
+}
+.option.wrong {
+  border-color: var(--coral);
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+  animation: shake 0.4s ease;
+}
+.option .opt-letter {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(168, 85, 247, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+  font-weight: 900;
+}
+
+/* ФИДБЕК */
+.feedback {
+  padding: 14px 18px;
+  border-radius: 14px;
+  margin-top: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.6;
+  display: none;
+}
+.feedback.show { display: block; animation: slideUp 0.4s ease; }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.feedback.correct {
+  background: rgba(16, 185, 129, 0.15);
+  border-left: 4px solid var(--mint);
+  color: var(--mint);
+}
+.feedback.wrong {
+  background: rgba(239, 68, 68, 0.15);
+  border-left: 4px solid var(--coral);
+  color: #fca5a5;
+}
+.feedback .explain {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  opacity: 0.9;
+}
+
+/* ЧАСТИЦЫ */
+.particles {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+}
+.particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: particleFly 0.8s ease-out forwards;
+}
+@keyframes particleFly {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+}
+.screen-shake {
+  animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+@keyframes shake {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-4px, -4px); }
+  20% { transform: translate(4px, 0); }
+  30% { transform: translate(-4px, 4px); }
+  40% { transform: translate(4px, -4px); }
+  50% { transform: translate(-4px, 0); }
+  60% { transform: translate(4px, 4px); }
+  70% { transform: translate(-4px, -4px); }
+  80% { transform: translate(4px, 0); }
+  90% { transform: translate(-4px, 4px); }
+}
+@keyframes pop {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+/* ФИНАЛ */
+.result-screen {
+  text-align: center;
+  padding: 30px 16px;
+}
+.result-icon {
+  font-size: clamp(80px, 18vw, 130px);
+  margin-bottom: 16px;
+  animation: pop 0.6s ease, float 2s ease-in-out infinite 0.6s;
+  filter: drop-shadow(0 0 50px rgba(251, 191, 36, 0.8));
+}
+.result-title {
+  font-size: clamp(24px, 6vw, 40px);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--gold), var(--pink), var(--purple));
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 12px;
+  animation: gradientShift 3s ease infinite;
+}
+.result-sub {
+  font-size: clamp(14px, 3vw, 17px);
+  color: var(--text-dim);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+.result-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.result-stat {
+  background: rgba(26, 34, 51, 0.9);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 14px;
+  padding: 14px;
+}
+.result-stat .value {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.result-stat .label {
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 800;
+}
+.reflection {
+  background: rgba(26, 34, 51, 0.9);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 20px;
+  padding: 20px;
+  margin: 20px 0;
+  text-align: left;
+}
+.reflection h3 {
+  color: var(--cyan);
+  font-size: 17px;
+  margin-bottom: 14px;
+  text-align: center;
+}
+.reflection-item { margin-bottom: 14px; }
+.reflection-item label {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+.reflection-item textarea {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(10, 14, 26, 0.7);
+  border: 2px solid rgba(168, 85, 247, 0.3);
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text);
+  resize: vertical;
+  min-height: 60px;
+}
+.reflection-item textarea:focus {
+  outline: none;
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.1);
+}
+.ad-block {
+  background: rgba(26, 34, 51, 0.9);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-top: 16px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+.ad-block strong { color: var(--cyan); display: block; margin-bottom: 6px; font-size: 14px; }
+.ad-block a {
+  color: var(--gold);
+  font-weight: 800;
+  text-decoration: none;
+  display: inline-block;
+  margin: 4px 8px;
+}
+.ad-block a:hover { text-decoration: underline; }
+.controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 14px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="top-bar">
+    <div class="top-stats">
+      <div class="stat-item"><span class="stat-icon">🏆</span><span class="stat-value" id="coins">0</span></div>
+      <div class="stat-item"><span class="stat-icon">🎯</span><span class="stat-value" id="attempts">0</span></div>
+      <div class="stat-item"><span class="stat-icon">💡</span><span class="stat-value" id="level">Знание</span></div>
+    </div>
+  </div>
+
+  <!-- СТАРТ -->
+  <div id="screen-start" class="screen active">
+    <div class="start-screen">
+      <div class="start-icon">🔢</div>
+      <div class="start-title">Числовые ребусы</div>
+      <div class="start-sub">Земля 1 из 7</div>
+
+      <div class="start-dialogue">
+        <p><strong>Считарик:</strong> Привет, стажёр! Я нашёл странный пример.</p>
+        <p>Вместо цифр — <em>буквы</em>. Одинаковые буквы — одинаковые цифры, разные — разные.</p>
+        <p>Помоги мне разгадать: <strong>АБ + БА = 121</strong>. И ещё — узнаем, что такое <em>волшебный квадрат</em>.</p>
+      </div>
+
+      <button type="button" class="btn btn-gold" onclick="startGame()">🔍 Начать расследование</button>
+    </div>
+  </div>
+
+  <!-- ИГРА -->
+  <div id="screen-game" class="screen">
+    <div class="game-header">
+      <h2>🔢 Дело о ребусах</h2>
+      <button type="button" class="btn btn-secondary btn-small" onclick="resetGame()">↺ Сбросить</button>
+    </div>
+
+    <div class="bloom-progress" id="bloom-progress">
+      <div class="bloom-step active" data-step="0">Знание</div>
+      <div class="bloom-step" data-step="1">Понимание</div>
+      <div class="bloom-step" data-step="2">Применение</div>
+      <div class="bloom-step" data-step="3">Анализ</div>
+      <div class="bloom-step" data-step="4">Синтез</div>
+      <div class="bloom-step" data-step="5">Оценка</div>
+    </div>
+
+    <div class="game-card">
+      <div class="game-scene" id="game-scene">
+        <strong>Считарик:</strong> «Начнём с простого. Что такое числовой ребус?»
+      </div>
+
+      <div class="question">
+        <div class="question-label" id="question-label">Уровень: Знание</div>
+        <div class="question-text" id="question-text">Что такое числовой ребус?</div>
+      </div>
+
+      <div id="content-container"></div>
+
+      <div class="feedback" id="feedback"></div>
+
+      <div class="controls" id="next-container" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- ФИНАЛ -->
+  <div id="screen-final" class="screen">
+    <div class="result-screen">
+      <div class="result-icon">🏆</div>
+      <div class="result-title">Дело закрыто!</div>
+      <div class="result-sub">
+        Ты разгадал числовые ребусы, понял принцип <strong>инварианта</strong><br>
+        и научился строить <strong>волшебные квадраты</strong>.
+      </div>
+
+      <div class="result-stats">
+        <div class="result-stat">
+          <div class="value" id="final-coins">0</div>
+          <div class="label">Монет</div>
+        </div>
+        <div class="result-stat">
+          <div class="value" id="final-attempts">0</div>
+          <div class="label">Попыток</div>
+        </div>
+        <div class="result-stat">
+          <div class="value" id="final-bloom">6/6</div>
+          <div class="label">Уровней Блума</div>
+        </div>
+      </div>
+
+      <div class="reflection">
+        <h3>💭 Рефлексия</h3>
+        <div class="reflection-item">
+          <label>Что было самым интересным?</label>
+          <textarea id="reflect-1" placeholder="Напиши здесь..."></textarea>
+        </div>
+        <div class="reflection-item">
+          <label>Что было самым сложным?</label>
+          <textarea id="reflect-2" placeholder="Напиши здесь..."></textarea>
+        </div>
+        <div class="reflection-item">
+          <label>Где в жизни пригодятся ребусы?</label>
+          <textarea id="reflect-3" placeholder="Напиши здесь..."></textarea>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button type="button" class="btn btn-gold" onclick="restartAll()">🔄 Ещё раз</button>
+      </div>
+    </div>
+
+    <div class="ad-block">
+      <strong>🎓 Мягкая математика</strong>
+      Хочешь ещё больше ребусов? Приходи на курс!
+      <br>
+      <a href="https://vk.com/smartskillsmaria" target="_blank" rel="noopener">📢 Группа ВК</a>
+      <a href="https://vk.com/im/convo/-229273902" target="_blank" rel="noopener">✉️ Мария Абрамова</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// СОСТОЯНИЕ
+// ============================================================
+const state = {
+  coins: 0,
+  attempts: 0,
+  bloomStep: 0
+};
+
+const BLOOM_LEVELS = ['Знание', 'Понимание', 'Применение', 'Анализ', 'Синтез', 'Оценка'];
+
+// ============================================================
+// GAME FEEL
+// ============================================================
+function spawnParticles(x, y, color, count = 12) {
+  const container = document.createElement('div');
+  container.className = 'particles';
+  container.style.left = x + 'px';
+  container.style.top = y + 'px';
+  document.body.appendChild(container);
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.background = color;
+    p.style.boxShadow = `0 0 10px ${color}`;
+    const angle = (Math.PI * 2 * i) / count;
+    const dist = 60 + Math.random() * 60;
+    p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+    p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+    container.appendChild(p);
+  }
+  setTimeout(() => container.remove(), 1000);
+}
+
+function screenShake() {
+  document.body.classList.add('screen-shake');
+  setTimeout(() => document.body.classList.remove('screen-shake'), 400);
+}
+
+// ============================================================
+// СТАРТ / СБРОС
+// ============================================================
+function startGame() {
+  document.getElementById('screen-start').classList.remove('active');
+  document.getElementById('screen-game').classList.add('active');
+  state.bloomStep = 0;
+  state.coins = 0;
+  state.attempts = 0;
+  updateTopBar();
+  renderBloomStep();
+}
+
+function resetGame() {
+  if (!confirm('Сбросить прогресс и вернуться в начало?')) return;
+  state.bloomStep = 0;
+  state.coins = 0;
+  state.attempts = 0;
+  document.getElementById('content-container').innerHTML = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').innerHTML = '';
+  document.getElementById('next-container').style.display = 'none';
+  updateTopBar();
+  document.getElementById('screen-game').classList.remove('active');
+  document.getElementById('screen-final').classList.remove('active');
+  document.getElementById('screen-start').classList.add('active');
+}
+
+function restartAll() {
+  document.getElementById('screen-final').classList.remove('active');
+  document.getElementById('screen-game').classList.remove('active');
+  document.getElementById('screen-start').classList.add('active');
+  state.bloomStep = 0;
+  state.coins = 0;
+  state.attempts = 0;
+  updateTopBar();
+}
+
+function updateTopBar() {
+  document.getElementById('coins').textContent = state.coins;
+  document.getElementById('attempts').textContent = state.attempts;
+  document.getElementById('level').textContent = BLOOM_LEVELS[state.bloomStep];
+}
+
+// ============================================================
+// РЕНДЕР УРОВНЯ
+// ============================================================
+function renderBloomStep() {
+  document.querySelectorAll('.bloom-step').forEach((el, i) => {
+    el.classList.remove('active', 'done');
+    if (i < state.bloomStep) el.classList.add('done');
+    if (i === state.bloomStep) el.classList.add('active');
+  });
+  document.getElementById('question-label').textContent = 'Уровень: ' + BLOOM_LEVELS[state.bloomStep];
+  updateTopBar();
+
+  document.getElementById('content-container').innerHTML = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').innerHTML = '';
+  document.getElementById('next-container').style.display = 'none';
+  document.getElementById('next-container').innerHTML = 
+    '<button type="button" class="btn btn-gold" onclick="nextBloomStep()">Следующий уровень →</button>';
+
+  if (state.bloomStep === 0) renderZnanie();
+  else if (state.bloomStep === 1) renderPonimanie();
+  else if (state.bloomStep === 2) renderPrimenenie();
+  else if (state.bloomStep === 3) renderAnaliz();
+  else if (state.bloomStep === 4) renderSintez();
+  else if (state.bloomStep === 5) renderOcenka();
+}
+
+// ============================================================
+// УРОВЕНЬ 1. ЗНАНИЕ
+// ============================================================
+function renderZnanie() {
+  document.getElementById('question-text').textContent = 'Что такое числовой ребус?';
+  document.getElementById('game-scene').innerHTML = 
+    '<strong>Считарик:</strong> «Прежде чем решать — сформулируй, что это такое.»';
+
+  const options = [
+    { text: 'Пример, где буквы заменяют цифры', correct: true },
+    { text: 'Задача, где нужно угадать число', correct: false },
+    { text: 'Игра с числами', correct: false },
+    { text: 'Задача с буквами', correct: false }
+  ];
+
+  renderOptions(options, (opt, btn) => {
+    state.attempts++;
+    if (opt.correct) {
+      btn.classList.add('correct');
+      state.coins += 5;
+      showFeedback(true, 'Верно!', 
+        'Числовой ребус — это пример, где буквы заменяют цифры. Одинаковые буквы — одинаковые цифры, разные — разные.');
+      spawnParticles(btn.getBoundingClientRect().left + 100, btn.getBoundingClientRect().top + 20, '#10b981', 16);
+      document.getElementById('next-container').style.display = 'flex';
+    } else {
+      btn.classList.add('wrong');
+      showFeedback(false, 'Не совсем.', 'Подумай: буквы в ребусе — это цифры. Что это значит?');
+      screenShake();
+    }
+    updateTopBar();
+  });
+}
+
+// ============================================================
+// УРОВЕНЬ 2. ПОНИМАНИЕ — Bar Modeling
+// ============================================================
+function renderPonimanie() {
+  document.getElementById('question-text').textContent = 'Как разложить АБ на разряды?';
+  document.getElementById('game-scene').innerHTML = 
+    '<strong>Считарик:</strong> «АБ — двузначное число. А — десятки, Б — единицы. Чему равно АБ?»';
+
+  const options = [
+    { text: 'А + Б', correct: false },
+    { text: 'А × Б', correct: false },
+    { text: 'А × 10 + Б', correct: true },
+    { text: 'А × 100 + Б', correct: false }
+  ];
+
+  renderOptions(options, (opt, btn) => {
+    state.attempts++;
+    if (opt.correct) {
+      btn.classList.add('correct');
+      state.coins += 5;
+      showFeedback(true, 'Верно! АБ = А × 10 + Б.', 
+        'А — разряд десятков, Б — разряд единиц. Например, 29 = 2 × 10 + 9.');
+      spawnParticles(btn.getBoundingClientRect().left + 100, btn.getBoundingClientRect().top + 20, '#10b981', 16);
+      document.getElementById('next-container').style.display = 'flex';
+    } else {
+      btn.classList.add('wrong');
+      showFeedback(false, 'Не совсем.', 'АБ — это двузначное число. А — сколько десятков?');
+      screenShake();
+    }
+    updateTopBar();
+  });
+}
+
+// ============================================================
+// УРОВЕНЬ 3. ПРИМЕНЕНИЕ — Решить ребус
+// ============================================================
+function renderPrimenenie() {
+  document.getElementById('question-text').textContent = 'Реши ребус: АБ + БА = 121';
+  document.getElementById('game-scene').innerHTML = 
+    '<strong>Считарик:</strong> «Найди А и Б. Помни: одинаковые буквы — одинаковые цифры.»';
+
+  const container = document.getElementById('content-container');
+  container.innerHTML = `
+    <div class="rebus-container">
+      <div class="rebus-line">
+        <span class="rebus-letter">А</span>
+        <span class="rebus-letter">Б</span>
+      </div>
+      <div class="rebus-line">
+        <span class="rebus-letter">Б</span>
+        <span class="rebus-letter">А</span>
+      </div>
+      <div class="rebus-line divider"></div>
+      <div class="rebus-line">
+        <span style="color: var(--gold);">1</span>
+        <span style="color: var(--gold);">2</span>
+        <span style="color: var(--gold);">1</span>
+      </div>
+    </div>
+    <p style="text-align: center; color: var(--text-dim); font-size: 13px; margin-bottom: 12px;">
+      Подсказка: АБ = 10А + Б, БА = 10Б + А. Сумма = 11(А + Б) = 121.
+    </p>
+    <div class="input-row" style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <input type="text" class="rebus-input" id="rebus-a" placeholder="А = ?" maxlength="1" inputmode="numeric" style="flex: 1; min-width: 100px; padding: 14px; background: rgba(10,14,26,0.8); border: 2px solid rgba(168,85,247,0.4); border-radius: 14px; font-size: 20px; font-weight: 900; color: var(--text); font-family: inherit; text-align: center;">
+      <input type="text" class="rebus-input" id="rebus-b" placeholder="Б = ?" maxlength="1" inputmode="numeric" style="flex: 1; min-width: 100px; padding: 14px; background: rgba(10,14,26,0.8); border: 2px solid rgba(168,85,247,0.4); border-radius: 14px; font-size: 20px; font-weight: 900; color: var(--text); font-family: inherit; text-align: center;">
+    </div>
+    <div class="controls" style="margin-top: 14px;">
+      <button type="button" class="btn btn-gold" onclick="checkRebus()">✓ Проверить</button>
+    </div>
+  `;
+}
+
+function checkRebus() {
+  const a = parseInt(document.getElementById('rebus-a').value);
+  const b = parseInt(document.getElementById('rebus-b').value);
+
+  if (isNaN(a) || isNaN(b)) {
+    showFeedback(false, 'Введи обе цифры!', '');
+    return;
+  }
+
+  if (a + b === 11 && a !== b) {
+    state.coins += 5;
+    state.attempts++;
+    showFeedback(true, `✅ Верно! А=${a}, Б=${b}.`, 
+      `АБ = ${a}${b}, БА = ${b}${a}. Сумма = ${a}${b} + ${b}${a} = ${a*10+b + b*10+a} = 121. Задача имеет 4 решения: 29+92, 38+83, 47+74, 56+65.`);
+    spawnParticles(window.innerWidth / 2, window.innerHeight / 2, '#10b981', 30);
+    document.getElementById('next-container').style.display = 'flex';
+  } else {
+    state.attempts++;
+    showFeedback(false, 'Не совсем. Попробуй ещё.', 'Сумма = 11 × (А + Б) = 121, значит А + Б = 11.');
+    screenShake();
+  }
+  updateTopBar();
+}
+
+// ============================================================
+// УРОВЕНЬ 4. АНАЛИЗ — Почему 4 решения?
+// ============================================================
+function renderAnaliz() {
+  document.getElementById('question-text').textContent = 'Почему в ребусе АБ + БА = 121 ровно 4 решения?';
+  document.getElementById('game-scene').innerHTML = 
+    '<strong>Считарик:</strong> «Разложи на части. Что мы знаем про А и Б?»';
+
+  const options = [
+    { text: 'Потому что 121 — простое число', correct: false },
+    { text: 'А + Б = 11, а цифры от 0 до 9 → пары (2,9), (3,8), (4,7), (5,6) и обратные', correct: true },
+    { text: 'Потому что 121 делится на 11', correct: false },
+    { text: 'Случайно', correct: false }
+  ];
+
+  renderOptions(options, (opt, btn) => {
+    state.attempts++;
+    if (opt.correct) {
+      btn.classList.add('correct');
+      state.coins += 5;
+      showFeedback(true, 'Точно! А + Б = 11.', 
+        'Пары: (2,9), (3,8), (4,7), (5,6) — и обратные. Всего 4 пары (без учёта порядка). Значит, 4 решения.');
+      spawnParticles(btn.getBoundingClientRect().left + 100, btn.getBoundingClientRect().top + 20, '#fbbf24', 20);
+      document.getElementById('next-container').style.display = 'flex';
+    } else {
+      btn.classList.add('wrong');
+      showFeedback(false, 'Не то.', 'А + Б = 11. Сколько пар цифр дают сумму 11?');
+      screenShake();
+    }
+    updateTopBar();
+  });
+}
+
+// ============================================================
+// УРОВЕНЬ 5. СИНТЕЗ — Свой ребус
+// ============================================================
+function renderSintez() {
+  document.getElementById('question-text').textContent = 'Придумай свой ребус АБ + БА = ?';
+  document.getElementById('game-scene').innerHTML = 
+    '<strong>Считарик:</strong> «Введи сумму от 110 до 198 (кратную 11). Посмотрим, сколько решений!»';
+
+  const container = document.getElementById('content-container');
+  container.innerHTML = `
+    <div class="input-row" style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <input type="number" id="custom-sum" placeholder="Например, 143" min="110" max="198" style="flex: 1; min-width: 150px; padding: 14px; background: rgba(10,14,26,0.8); border: 2px solid rgba(168,85,247,0.4); border-radius: 14px; font-size: 18px; font-weight: 900; color: var(--text); font-family: inherit; text-align: center;">
+    </div>
+    <div class="controls" style="margin-top: 14px;">
+      <button type="button" class="btn btn-gold" onclick="checkCustomRebus()">✓ Создать ребус</button>
+    </div>
+  `;
+}
+
+function checkCustomRebus() {
+  const sum = parseInt(document.getElementById('custom-sum').value);
+
+  if (isNaN(sum) || sum < 110 || sum > 198 || sum % 11 !== 0) {
+    showFeedback(false, 'Сумма должна быть кратна 11 и от 110 до 198!', '');
+    screenShake();
+    return;
+  }
+
+  const aPlusB = sum / 11;
+  const solutions = [];
+  for (let a = 1; a <= 9; a++) {
+    const b = aPlusB - a;
+    if (b >= 0 && b <= 9 && b !== a) {
+      solutions.push([a, b]);
+    }
+  }
+
+  state.coins += 5;
+  state.attempts++;
+
+  showFeedback(true, `✅ Ребус: АБ + БА = ${sum}`, 
+    `А + Б = ${aPlusB}. Возможные решения: ${solutions.map(s => `${s[0]}${s[1]}+${s[1]}${s[0]}`).join(', ')}.`);
+  spawnParticles(window.innerWidth / 2, window.innerHeight / 2, '#a855f7', 30);
+  document.getElementById('next-container').style.display = 'flex';
+  updateTopBar();
+}
+
+// ============================================================
+// УРОВЕНЬ 6. ОЦЕНКА — Инварианты
+// ============================================================
+function renderOcenka() {
+  document.getElementById('question-text').textContent = 'Задача на инвариант: числа 1..20, стираем пару, записываем сумму. Что останется?';
+  document.getElementById('game-scene').innerHTML = 
+    '<strong>Считарик:</strong> «Подумай: что НЕ меняется при операции?»';
+
+  const options = [
+    { text: 'Произведение всех чисел', correct: false },
+    { text: 'Сумма всех чисел', correct: true },
+    { text: 'Количество чисел', correct: false },
+    { text: 'Наибольшее число', correct: false }
+  ];
+
+  renderOptions(options, (opt, btn) => {
+    state.attempts++;
+    if (opt.correct) {
+      btn.classList.add('correct');
+      state.coins += 5;
+      showFeedback(true, '✅ Сумма не меняется!', 
+        'Операция: стереть a и b, записать a+b. Сумма: −a −b + (a+b) = 0. Значит, сумма всех чисел = 1+2+...+20 = 210. Последнее число = 210.');
+      spawnParticles(btn.getBoundingClientRect().left + 100, btn.getBoundingClientRect().top + 20, '#fbbf24', 30);
+      document.getElementById('next-container').style.display = 'flex';
+      document.getElementById('next-container').innerHTML = 
+        '<button type="button" class="btn btn-gold" onclick="showFinal()">🏆 Завершить дело</button>';
+    } else {
+      btn.classList.add('wrong');
+      showFeedback(false, 'Не совсем.', 'Что происходит с суммой при замене a и b на a+b?');
+      screenShake();
+    }
+    updateTopBar();
+  });
+}
+
+// ============================================================
+// ОБЩИЕ
+// ============================================================
+function renderOptions(options, onClick) {
+  const container = document.getElementById('content-container');
+  container.innerHTML = '';
+  const opts = document.createElement('div');
+  opts.className = 'options';
+  options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'option';
+    btn.innerHTML = `<span class="opt-letter">${String.fromCharCode(65 + i)}</span><span>${opt.text}</span>`;
+    btn.onclick = () => {
+      if (btn.disabled) return;
+      opts.querySelectorAll('.option').forEach(b => b.disabled = true);
+      onClick(opt, btn);
+    };
+    opts.appendChild(btn);
+  });
+  container.appendChild(opts);
+}
+
+function showFeedback(isCorrect, text, explain) {
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback show ' + (isCorrect ? 'correct' : 'wrong');
+  fb.innerHTML = text + (explain ? `<div class="explain">${explain}</div>` : '');
+}
+
+function nextBloomStep() {
+  state.bloomStep++;
+  if (state.bloomStep >= 6) showFinal();
+  else renderBloomStep();
+}
+
+function showFinal() {
+  document.getElementById('screen-game').classList.remove('active');
+  document.getElementById('screen-final').classList.add('active');
+  document.getElementById('final-coins').textContent = state.coins;
+  document.getElementById('final-attempts').textContent = state.attempts;
+  document.getElementById('final-bloom').textContent = '6/6';
+  spawnParticles(window.innerWidth / 2, window.innerHeight / 2, '#fbbf24', 50);
+}
+
+// ИНИЦИАЛИЗАЦИЯ
+updateTopBar();
+console.log('%c🔢 Земля «Числовые ребусы» загружена!', 'color:#00d4ff;font-size:16px;font-weight:bold');
+</script>
+</body>
+</html>
